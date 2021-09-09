@@ -1,0 +1,2 @@
+"# pandas-model-tarin"
+.env
