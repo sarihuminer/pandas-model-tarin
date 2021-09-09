@@ -1,2 +1,2 @@
 "# pandas-model-tarin"
-.env
+to get the env -you have requirements.txt file
