@@ -9,7 +9,7 @@ data = pd.read_excel(excel_file)
 #        'y_Predicted': [1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0]
 #      }
 
-df = pd.DataFrame(data, columns=['ref', 'title'])
+df = pd.DataFrame(data, columns=['isRefQK', 'title'])
 print(df)
 confusion_matrix = pd.crosstab(df['ref'], df['title'], rownames=['ref'], colnames=['title'])
 print(confusion_matrix)
