@@ -30,6 +30,26 @@ def prepare_targets(y_train, y_test):
     return y_train_enc, y_test_enc
 
 
+def create_confusion_matrix(actual=[1, 0, 0, 1, 0, 0, 1, 0, 0, 1], predicted=[1, 0, 0, 1, 0, 0, 0, 1, 0, 0]):
+    # confusion matrix in sklearn
+    from sklearn.metrics import confusion_matrix
+    from sklearn.metrics import classification_report
+    # predicted values
+    # [1,0,0,1,0,0,1,0,0,1]
+    # [1,0,0,1,0,0,0,1,0,0]
+    # confusion matrix
+    matrix = confusion_matrix(actual, predicted, labels=[1, 0])
+    print('Confusion matrix : \n', matrix)
+
+    # outcome values order in sklearn
+    tp, fn, fp, tn = confusion_matrix(actual, predicted, labels=[1, 0]).reshape(-1)
+    print('Outcome values : \n', tp, fn, fp, tn)
+
+    # classification report for precision, recall f1-score and accuracy
+    matrix = classification_report(actual, predicted, labels=[1, 0])
+    print('Classification report : \n', matrix)
+
+
 excel_file = 'WikiRef-input.xlsx'
 # data = pd.read_excel(excel_file)
 # dataset = data
@@ -80,25 +100,27 @@ clf.fit(X_train_enc, y_train_enc)
 print(clf.predict(np.nan_to_num(X_test_enc)))
 print(y_test)
 print(clf.score(np.nan_to_num(X_test_enc), y_test_enc))
-#clf.score(np.nan_to_num(X_test_enc), y_test_enc)
+create_confusion_matrix(y_train_enc, y_test_enc)
+#create_confusion_matrix(y_test_enc, np.nan_to_num(X_test_enc))
+# clf.score(np.nan_to_num(X_test_enc), y_test_enc)
 #### you need tensorflow 2.2 or 3.3 to run it###
 import keras
-#from keras.models import Sequential
-#from keras.layers import Dense
-#from keras.optimizers import adam_v2
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from keras.optimizers import adam_v2
 
-#model = Sequential()
-#model.add(Dense(2, input_shape=(9,), activation='softmax'))
-#model.compile(adam_v2.Adam(lr=0.1), loss='categorical_crossentropy', metrics=['accuracy'])
+# model = Sequential()
+# model.add(Dense(2, input_shape=(9,), activation='softmax'))
+# model.compile(adam_v2.Adam(lr=0.1), loss='categorical_crossentropy', metrics=['accuracy'])
 
-#from keras.callbacks import EarlyStopping
+# from keras.callbacks import EarlyStopping
 
-#es = EarlyStopping(monitor='val_loss', min_delta=0.001, patience=5, verbose=1, mode='auto')
+# es = EarlyStopping(monitor='val_loss', min_delta=0.001, patience=5, verbose=1, mode='auto')
 
-#model.fit(X_train, y_train, validation_data=(X_test, y_test), callbacks=[es], epochs=500)
-#y_pred = model.predict(X_test)
-#print(y_pred[:5])
-#y_pred_class = np.argmax(y_pred, axis=1)
-#print(y_pred_class)
+# model.fit(X_train, y_train, validation_data=(X_test, y_test), callbacks=[es], epochs=500)
+# y_pred = model.predict(X_test)
+# print(y_pred[:5])
+# y_pred_class = np.argmax(y_pred, axis=1)
+# print(y_pred_class)
 
 ###end tnsoflow 2.2 -3.3 v##

@@ -19,6 +19,6 @@ export class UploadeFileComponent implements OnInit {
     console.log(this.path);
     this.sendService.sendPath(this.path).subscribe(res => {
       console.log("succses to connect " + res);
-    }, err => { console.log("err") });
+    }, err => { debugger; console.log("err") });
   }
 }
