@@ -8,4 +8,8 @@ controller file-get from the angular the path of file.
 
 pandasTry- create confussion matrix from static arrays.
 
+to run the model 2 ways:
+ *run the create model file
+ *run controller using flask,not forget run also angular project
+ 
 

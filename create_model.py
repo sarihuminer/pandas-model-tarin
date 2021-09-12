@@ -50,58 +50,65 @@ def create_confusion_matrix(actual=[1, 0, 0, 1, 0, 0, 1, 0, 0, 1], predicted=[1,
     print('Classification report : \n', matrix)
 
 
-excel_file = 'WikiRef-input.xlsx'
-# data = pd.read_excel(excel_file)
-# dataset = data
-# dataset = pd.read_csv('WikiRef-input.xlsx')
-dataset = pd.read_excel('WikiRef-input.xlsx')
-dataset = dataset.dropna()
-sns.set(style='ticks')
-sns.pairplot(dataset.iloc[:, 0:11], hue='isRefQK')
-# הפרדה על מנת לאמן את הנתונים
-x = dataset.iloc[:, 0:11].values
-y = dataset.iloc[:, 8].values
-# format all fields as string
-X = x.astype(str)
-# reshape target to be a 2d array
-y = y.reshape((len(y), 1))
-# קבלת הסוגים
+def train_model(path='WikiRef-input.xlsx'):
+    excel_file = 'WikiRef-input.xlsx'
+    # data = pd.read_excel(excel_file)
+    # dataset = data
+    # dataset = pd.read_csv('WikiRef-input.xlsx')
+    dataset = pd.read_excel('WikiRef-input.xlsx')
+    dataset = dataset.dropna()
+    sns.set(style='ticks')
+    sns.pairplot(dataset.iloc[:, 0:11], hue='isRefQK')
+    # הפרדה על מנת לאמן את הנתונים
+    x = dataset.iloc[:, 0:11].values
+    y = dataset.iloc[:, 8].values
+    # format all fields as string
+    X = x.astype(str)
+    # reshape target to be a 2d array
+    y = y.reshape((len(y), 1))
+    # קבלת הסוגים
 
-species_names = np.unique(np.array(y[np.logical_not(np.isnan(y))]))
+    species_names = np.unique(np.array(y[np.logical_not(np.isnan(y))]))
 
-print(species_names)
-species_names_dict = {k: v for v, k in enumerate(species_names)}
-print(species_names_dict)
-s = pd.DataFrame(y)
-y_cat = pd.get_dummies(s)
-print(y_cat.sample(5))
+    print(species_names)
+    species_names_dict = {k: v for v, k in enumerate(species_names)}
+    print(species_names_dict)
+    s = pd.DataFrame(y)
+    y_cat = pd.get_dummies(s)
+    print(y_cat.sample(5))
 
-X = pd.DataFrame(x)
-from sklearn.model_selection import train_test_split
+    X = pd.DataFrame(x)
+    from sklearn.model_selection import train_test_split
 
-X_train, X_test, y_train, y_test = train_test_split(X.values, y_cat, test_size=0.25, random_state=42)
-# X_train, X_test, y_train, y_test = train_test_split(X.values, y, test_size=0.25, random_state=42)
-# אימון המודל
+    X_train, X_test, y_train, y_test = train_test_split(X.values, y_cat, test_size=0.25, random_state=42)
+    # X_train, X_test, y_train, y_test = train_test_split(X.values, y, test_size=0.25, random_state=42)
+    # אימון המודל
 
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import make_classification
-from sklearn.feature_extraction import DictVectorizer
+    from sklearn import datasets
+    from sklearn.model_selection import train_test_split
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.datasets import make_classification
+    from sklearn.feature_extraction import DictVectorizer
+    vec = DictVectorizer()
+    # prepare input data
+    X_train_enc, X_test_enc = prepare_inputs(X_train, X_test)
+    # prepare output data
+    y_train_enc, y_test_enc = prepare_targets(y_train, y_test)
 
-vec = DictVectorizer()
-# prepare input data
-X_train_enc, X_test_enc = prepare_inputs(X_train, X_test)
-# prepare output data
-y_train_enc, y_test_enc = prepare_targets(y_train, y_test)
+    clf = RandomForestClassifier()
+    clf.fit(X_train_enc, y_train_enc)
+    pred = clf.predict(np.nan_to_num(X_test_enc))
+    print(pred)
+    print(y_test)
+    print(clf.score(np.nan_to_num(X_test_enc), y_test_enc))
+    create_confusion_matrix(y_test_enc, pred)
+    create_confusion_matrix(y_train_enc, y_test_enc)
 
-clf = RandomForestClassifier()
-clf.fit(X_train_enc, y_train_enc)
-print(clf.predict(np.nan_to_num(X_test_enc)))
-print(y_test)
-print(clf.score(np.nan_to_num(X_test_enc), y_test_enc))
-create_confusion_matrix(y_train_enc, y_test_enc)
-#create_confusion_matrix(y_test_enc, np.nan_to_num(X_test_enc))
+train_model()
+#if __name__ == '__main__':
+  #  train_model()
+
+# create_confusion_matrix(y_test_enc, np.nan_to_num(X_test_enc))
 # clf.score(np.nan_to_num(X_test_enc), y_test_enc)
 #### you need tensorflow 2.2 or 3.3 to run it###
 import keras
